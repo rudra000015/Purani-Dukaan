@@ -1,0 +1,21 @@
+{
+  "subscriptions": [
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d3vm2ECF6a0:APA91bGvjN2gVIqcMqd5kfq1h7HilPPougqcqsR_U5ES7ZmanKGddCO6uS8Mzl-7lQBOp7dxpIL96HXXmZpm3y0edGv0HUZKn064QNK3-T2PeNLoPDYqrrO3ptrR_zd0cSbUWAUG6VbZ",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BLIe-UvoKY5x4yD-X8prL7w9Lp8TMOg45mRdCA65huOzQVk7_y7FAJEgQLqkZLJ3XBe1nX25Aum3st1Uyc1w7nc",
+        "auth": "ECXvuyV4y0QwqNEZcLGHRA"
+      },
+      "shopIds": [],
+      "types": [
+        "new_product",
+        "offer",
+        "open_now",
+        "general"
+      ],
+      "createdAt": "2026-03-14T22:48:20.916Z",
+      "updatedAt": "2026-03-14T22:48:29.019Z"
+    }
+  ]
+}
