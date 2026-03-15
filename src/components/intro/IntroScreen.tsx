@@ -39,7 +39,7 @@ export default function IntroScreen() {
         background: 'linear-gradient(135deg, #d2b48c, #b87333, #d2b48c)',
         WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
         filter: 'drop-shadow(0 0 60px rgba(184,115,51,0.5))',
-        animation: 'logoReveal 4s cubic-bezier(.16,1,.3,1) forwards',padding:2,
+        animation: 'logoReveal 4s cubic-bezier(.16,1,.3,1) forwards',padding:20,
         opacity: 0, lineHeight: 1.1,
       }}>
         पुरानी दुकान
@@ -51,7 +51,7 @@ export default function IntroScreen() {
         fontWeight: 700, marginTop: '1.5rem', fontSize: '0.85rem',
         animation: 'tagReveal 3s ease-out 1s forwards', opacity: 0,
       }}>
-        Meerut Heritage
+      Pride In Heritage
       </div>
 
       {/* Loading bar */}
