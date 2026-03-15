@@ -42,7 +42,7 @@ export default function IntroScreen() {
         animation: 'logoReveal 4s cubic-bezier(.16,1,.3,1) forwards',padding:20,
         opacity: 0, lineHeight: 1.1,
       }}>
-        पुरानी दुकान
+       WELCOME TO Hidden Haat
       </div>
 
       {/* Tagline */}

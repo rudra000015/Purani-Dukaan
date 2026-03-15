@@ -25,13 +25,19 @@ export default function ExplorerHeader({
   totalResults,
   onRefetch,
 }: Props) {
-  const { user, wishlist, navTo, logout } = useStore();
+  const { user, wishlist, navTo, logout, theme, setTheme, searchHistory, addSearchHistory } = useStore();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [locationOpen, setLocationOpen] = useState(false);
   const [showFilters, setShowFilters]   = useState(false);
   const [showVisual, setShowVisual]     = useState(false);
+  const [focused, setFocused]           = useState(false);
+
+  const POPULAR = [
+    'Jalebi', 'Hira Sweets', 'Gajak',
+    'Paneer', 'Namkeen', 'Dawai'
+  ];
 
   const activeFilterCount = [
     filters.category !== 'all',
@@ -43,7 +49,10 @@ export default function ExplorerHeader({
 
   const handleSearch = (val: string) => {
     onQueryChange(val);
-    if (val.length >= 3) onRefetch(val + ' Meerut');
+    if (val.length >= 3) {
+      onRefetch(val + ' Meerut');
+      addSearchHistory(val);
+    }
     if (val.length === 0) onRefetch();
   };
 
@@ -57,11 +66,11 @@ export default function ExplorerHeader({
       <header
         className="sticky top-0 z-40 px-4 pb-3 pt-3"
         style={{
-          background: 'rgba(255,255,255,0.94)',
+          background: 'var(--bg-header)',
           backdropFilter: 'blur(24px) saturate(200%)',
           WebkitBackdropFilter: 'blur(24px) saturate(200%)',
-          borderBottom: '1px solid rgba(141,85,36,0.08)',
-          boxShadow: '0 2px 16px rgba(0,0,0,0.04)',
+          borderBottom: 'var(--header-border)',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div className="max-w-7xl mx-auto">
@@ -85,7 +94,7 @@ export default function ExplorerHeader({
                   className="font-black text-base leading-none"
                   style={{ fontFamily: "'Baloo 2', cursive", color: '#3e2723',fontSize:20 }}
                 >
-                  पुरानी दुकान
+                 Hidden Haat
                 </p>
                 <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#059669' }}>
                Pride In Heritage
@@ -98,8 +107,8 @@ export default function ExplorerHeader({
               onClick={() => setLocationOpen(true)}
               className="flex items-center gap-1.5 rounded-xl px-3 py-2 flex-shrink-0 transition-all"
               style={{
-                background: '#fef3e2',
-                border: '1px solid rgba(245,158,11,0.3)',
+                background: 'var(--bg-pill)',
+                border: 'var(--border)',
               }}
             >
               <i className="fas fa-map-marker-alt text-xs" style={{ color: '#f59e0b' }} />
@@ -117,6 +126,11 @@ export default function ExplorerHeader({
             <button
               onClick={() => navTo('wishlist')}
               className="relative w-9 h-9 bg-white rounded-xl flex items-center justify-center border border-gray-200 hover:border-[#8d5524]/40 transition-all shadow-sm flex-shrink-0"
+              style={{
+                background: 'var(--bg-card)',
+                border: 'var(--border)',
+                boxShadow: 'var(--shadow-sm)',
+              }}
             >
               <i className="fas fa-heart text-gray-500 text-sm" />
               {wishlist.length > 0 && (
@@ -124,6 +138,20 @@ export default function ExplorerHeader({
                   {wishlist.length}
                 </span>
               )}
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="w-9 h-9 bg-white rounded-xl flex items-center justify-center border border-gray-200 hover:border-[#8d5524]/40 transition-all shadow-sm flex-shrink-0"
+              style={{
+                background: 'var(--bg-card)',
+                border: 'var(--border)',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              <i className={`fas ${theme === 'light' ? 'fa-moon' : 'fa-sun'} text-gray-500 text-sm`} />
             </button>
 
             {/* Avatar */}
@@ -137,15 +165,15 @@ export default function ExplorerHeader({
           </div>
 
           {/* ── Row 2: Search + Lens + Filter ─────────────── */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 relative">
 
             {/* Search input */}
             <div
               className="flex items-center flex-grow gap-2 px-4 py-2.5 rounded-2xl"
               style={{
-                background: '#fff',
-                border: '1.5px solid rgba(141,85,36,0.12)',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                background: 'var(--bg-input)',
+                border: 'var(--search-border)',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
               onClick={() => inputRef.current?.focus()}
@@ -156,6 +184,8 @@ export default function ExplorerHeader({
                 type="text"
                 value={query}
                 onChange={e => handleSearch(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setTimeout(() => setFocused(false), 150)} // Delay to allow clicks
                 placeholder="Jalebi, namkeen, dawai..."
                 className="flex-grow bg-transparent outline-none text-sm font-medium min-w-0"
                 style={{ color: '#374151' }}
@@ -169,6 +199,46 @@ export default function ExplorerHeader({
                 </button>
               )}
             </div>
+
+            {/* Search dropdown */}
+            {focused && !query && (
+              <div
+                className="search-dropdown absolute top-full left-0 right-0 mt-1 rounded-2xl shadow-lg z-50 max-h-80 overflow-y-auto"
+                style={{
+                  background: 'var(--bg-card)',
+                  border: 'var(--border)',
+                  boxShadow: 'var(--shadow-md)',
+                }}
+              >
+                {searchHistory.length > 0 && (
+                  <>
+                    {searchHistory.map(h => (
+                      <button
+                        key={h}
+                        onClick={() => { onQueryChange(h); setFocused(false); }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left text-gray-700 dark:text-gray-200"
+                      >
+                        <i className="fas fa-clock text-gray-400 text-sm" />
+                        <span className="text-sm">{h}</span>
+                      </button>
+                    ))}
+                    <div className="px-4 py-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Popular</p>
+                    </div>
+                  </>
+                )}
+                {POPULAR.map(p => (
+                  <button
+                    key={p}
+                    onClick={() => { onQueryChange(p); setFocused(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left text-gray-700 dark:text-gray-200"
+                  >
+                    <i className="fas fa-fire text-orange-400 text-sm" />
+                    <span className="text-sm">{p}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Visual search (Lens) */}
             <button

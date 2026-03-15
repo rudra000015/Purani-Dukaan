@@ -16,6 +16,44 @@
       ],
       "createdAt": "2026-03-14T22:48:20.916Z",
       "updatedAt": "2026-03-14T22:48:29.019Z"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/c8Nr9SqXHAI:APA91bHirbrXf_U5m7QgtVY2DYkLLD4M-gcp63HUhN6dKrbqCzzcF4tj2rlHVKvBsxUJn8Gzq5xwenQei-mdKKdhJi6cVl0iVop_-VU2HKbh5i_pFyzKJCGdGvu9gqL2rko8Xf4hz-o6",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BIP58SGhluqHw1SoQXwpEuRRzoVJl8axW4HYttnmEnU_KMSM_NFo7JM3RCQZ2LLxwt9kgp3dH8tl5WZVmZlxhmQ",
+        "auth": "yBQ3zLPcd91n1PWfHxrJVw"
+      },
+      "shopIds": [
+        "11247754102"
+      ],
+      "types": [
+        "new_product",
+        "offer",
+        "open_now",
+        "general"
+      ],
+      "createdAt": "2026-03-15T05:49:44.167Z",
+      "updatedAt": "2026-03-15T05:49:44.167Z"
+    },
+    {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/dbjz6K_04m0:APA91bFSbPVU7kemlJOUaFtLi2ZQXHStLwozltt_9MCQfhUkHMcHoO4RfbOshQHO6P4jfvp0bmHCwQ3n7UgbfK3zYC2i7kxVHsUvnxheGX8nQYODlmuqLE03YN5xly9sIz0-NhNSRTJo",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BIJif0UqeDHZ8W1qzuPzVaM1YIY3-rxfpkCUZgJFy1je2pFyRi5Fui2XoRC5IaBBdgIokLqQbRqBADKwiZuG0Ss",
+        "auth": "FRqiu4YyBiMGDlKvEg6Zsg"
+      },
+      "shopIds": [
+        "hira"
+      ],
+      "types": [
+        "new_product",
+        "offer",
+        "open_now",
+        "general"
+      ],
+      "createdAt": "2026-03-15T13:16:28.998Z",
+      "updatedAt": "2026-03-15T13:16:28.998Z"
     }
   ]
 }

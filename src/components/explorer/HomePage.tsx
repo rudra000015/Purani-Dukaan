@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Shop } from '@/types/shop';
 import { useStore } from '@/store/useStore';
 import { FilterState, CATEGORIES } from '@/data/categories';
 import ShopCard from './ShopCard';
 import ProductCard from './ProductCard';
 import OfferBanner from './OfferBanner';
+import FestivalBanner from '@/components/festival/FestivalBanner';
 
 // ── Props — all state lives in the header now ─────────────────
 interface Props {
@@ -16,6 +17,130 @@ interface Props {
   loading: boolean;
   error: string | null;
   refetch: (q?: string) => void;
+}
+
+// ── Map View Component ────────────────────────────────────────
+function MapView({ shops }: { shops: Shop[] }) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const { openShop } = useStore();
+
+  useEffect(() => {
+    if (mapInstance.current) return;
+    if (!mapRef.current) return;
+
+    let isCancelled = false;
+    (async () => {
+      const L = (await import('leaflet')).default;
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({ iconRetinaUrl: '', iconUrl: '', shadowUrl: '' });
+
+      if (isCancelled) return;
+
+      const map = L.map(mapRef.current!).setView([28.9845, 77.7064], 13);
+      mapInstance.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+      }).addTo(map);
+
+      L.circle([28.9845, 77.7064], {
+        color: '#8d5524', fillColor: '#8d5524', fillOpacity: 0.04, radius: 3000, weight: 1,
+      }).addTo(map);
+    })();
+
+    return () => {
+      isCancelled = true;
+      try {
+        markersRef.current.forEach((m) => m.remove());
+        markersRef.current = [];
+        mapInstance.current?.remove?.();
+      } catch {}
+      mapInstance.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shops.length || !mapInstance.current) return;
+    (async () => {
+      const L = (await import('leaflet')).default;
+      const map = mapInstance.current;
+
+      markersRef.current.forEach(m => m.remove());
+      markersRef.current = [];
+
+      const iconMap: Record<string, string> = {
+        pharmacy: 'prescription-bottle-alt',
+        grocery: 'shopping-cart',
+        sweets: 'cookie',
+        general: 'store',
+      };
+
+      shops.forEach(s => {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="cm"><i class="fas fa-${iconMap[s.cat] ?? 'store'}"></i></div>`,
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
+        });
+
+        const openBadge =
+          s.openNow !== null && s.openNow !== undefined
+            ? `<span style="color:${s.openNow ? '#059669' : '#ef4444'};font-weight:700;font-size:10px">
+               ${s.openNow ? '● Open Now' : '● Closed'}</span>`
+            : '';
+
+        const photoHtml = s.photos?.[0]
+          ? `<img src="${s.photos[0]}" style="width:100%;height:70px;object-fit:cover;border-radius:8px;margin-bottom:8px">`
+          : '';
+
+        const marker = L.marker(s.loc, { icon })
+          .addTo(map)
+          .bindPopup(`
+            <div style="min-width:210px;padding:4px">
+              ${photoHtml}
+              <h4 style="font-weight:800;font-size:14px;margin:0 0 4px">${s.name}</h4>
+              <p style="font-size:11px;color:#8d5524;font-weight:600;margin:0 0 2px">
+                ⭐ ${s.rating.toFixed(1)} (${s.totalRatings} reviews)
+              </p>
+              ${openBadge ? `<p style="margin:0 0 4px">${openBadge}</p>` : ''}
+              <p style="font-size:11px;color:#666;margin:0 0 8px">${s.addr}</p>
+              <button onclick="window.__openShop('${s.id}')"
+                style="background:#8d5524;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;width:100%">View Shop</button>
+            </div>
+          `);
+
+        markersRef.current.push(marker);
+      });
+    })();
+  }, [shops]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__openShop = openShop;
+    }
+  }, [openShop]);
+
+  return (
+    <div className="mb-4">
+      <div ref={mapRef} className="w-full h-96 rounded-2xl overflow-hidden border border-gray-200" />
+      <style jsx>{`
+        .cm {
+          width: 40px;
+          height: 40px;
+          background: #8d5524;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 16px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+      `}</style>
+    </div>
+  );
 }
 
 // ── Quick action icons row (Blinkit style) ────────────────────
@@ -228,7 +353,7 @@ function ShopListCard({ shop: s, index }: { shop: Shop; index: number }) {
 // ── Main HomePage ─────────────────────────────────────────────
 export default function HomePage({ query, filters, shops, loading, error, refetch }: Props) {
   const { openShop } = useStore();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('map');
 
   // Filter logic
   const filtered = useMemo(() => {
@@ -294,7 +419,9 @@ export default function HomePage({ query, filters, shops, loading, error, refetc
       {/* ── Home view (not searching) ──────────────────────── */}
       {!isSearching && (
         <>
+        
           <OfferBanner />
+          <FestivalBanner />
           <QuickActions onCat={cat => {}} />
           {!loading && <ShopStories shops={shops} onOpen={openShop} />}
           {newProducts.length > 0 && (
@@ -329,11 +456,11 @@ export default function HomePage({ query, filters, shops, loading, error, refetc
           {loading ? 'Dhoondh raha hoon...' : `${filtered.length} ${isSearching ? 'results' : 'Shops'}`}
         </p>
         <div className="flex gap-1 bg-white rounded-xl p-1 border border-gray-100">
-          {(['grid', 'list'] as const).map(mode => (
+          {(['grid', 'list', 'map'] as const).map(mode => (
             <button key={mode} onClick={() => setViewMode(mode)}
               className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
               style={{ background: viewMode === mode ? '#8d5524' : 'transparent', color: viewMode === mode ? '#fff' : '#9ca3af' }}>
-              <i className={`fas fa-${mode === 'grid' ? 'th' : 'list'}`} />
+              <i className={`fas fa-${mode === 'grid' ? 'th' : mode === 'list' ? 'list' : 'map-marked-alt'}`} />
             </button>
           ))}
         </div>
@@ -373,10 +500,12 @@ export default function HomePage({ query, filters, shops, loading, error, refetc
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filtered.map((s, i) => <ShopTileCard key={s.id} shop={s} index={i} />)}
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         <div className="space-y-3">
           {filtered.map((s, i) => <ShopListCard key={s.id} shop={s} index={i} />)}
         </div>
+      ) : (
+        <MapView shops={filtered} />
       )}
     </div>
   );

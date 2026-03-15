@@ -5,7 +5,7 @@ import { useShopDetail } from '@/hooks/useShops';
 import { useStore } from '@/store/useStore';
 import { prodImg } from '@/utils/prodImg';
 import { MenuItem, DayHours } from '@/types/shop';
-import FollowShopButton from '@/components/explorer/FollowShopButton';
+import ReviewsSection from './ReviewsSection';
 
 // ── Action buttons ────────────────────────────────────────────
 function ActionButtons({ profile }: { profile: any }) {
@@ -305,7 +305,7 @@ function OwnerCard({ profile, ownerImg }: { profile: any; ownerImg: string }) {
 }
 
 // ── Main Component ────────────────────────────────────────────
-type Tab = 'overview' | 'menu' | 'products' | 'hours' | 'info';
+type Tab = 'overview' | 'menu' | 'products' | 'hours' | 'reviews' | 'info';
 
 export default function ShopProfile() {
   const { currentShopId, navTo, viewProduct, toggleWish, isWished } = useStore();
@@ -317,6 +317,7 @@ export default function ShopProfile() {
     { id: 'menu', label: 'Menu', icon: 'utensils', show: !!(s?.ownerProfile?.menu?.length) },
     { id: 'products', label: 'Products', icon: 'box', show: !!(s?.products?.length) },
     { id: 'hours', label: 'Hours', icon: 'clock', show: !!(s?.openingHours?.length || s?.ownerProfile?.openingHoursText) },
+    { id: 'reviews', label: 'Reviews', icon: 'star', show: true },
     { id: 'info', label: 'Info', icon: 'info-circle', show: true },
   ] as const satisfies ReadonlyArray<{ id: Tab; label: string; icon: string; show: boolean }>)
     .filter((t) => t.show) as { id: Tab; label: string; icon: string; show: boolean }[];
@@ -585,6 +586,11 @@ export default function ShopProfile() {
               </div>
             )}
           </div>
+        )}
+
+        {/* ── Tab: Reviews ──────────────────────────────────── */}
+        {tab === 'reviews' && (
+          <ReviewsSection shopId={s.id} />
         )}
 
         {/* ── Tab: Info ─────────────────────────────────────── */}

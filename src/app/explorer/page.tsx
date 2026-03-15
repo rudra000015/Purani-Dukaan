@@ -42,7 +42,7 @@ export default function ExplorerApp() {
   };
 
   return (
-    <div style={{ background: '#f0ebe4', minHeight: '100vh' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <ExplorerHeader
         query={query}
         onQueryChange={setQuery}

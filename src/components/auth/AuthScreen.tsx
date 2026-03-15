@@ -36,15 +36,19 @@ export default function AuthScreen() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#fdfbf7] to-[#f5e6d3]">
-      <div className="max-w-md w-full bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 relative overflow-hidden">
+      <div className="max-w-md w-full bg-gray p-10 rounded-[2.5rem] shadow-2xl border border-gray-100 relative overflow-hidden">
         <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#b87333]/10 rounded-full blur-3xl" />
 
         <div className="text-center mb-8 relative z-10">
           <div className="w-20 h-20 bg-gradient-to-br from-[#8d5524] to-[#b87333] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl shadow-lg">
             <i className="fas fa-store" />
           </div>
-          <h1 className="text-3xl font-black text-gray-800">Purani Dukan</h1>
-          <p className="text-gray-500 font-medium text-sm mt-1">Discover Meerut&apos;s Heritage</p>
+          <h1 className="text-3xl font-black text-gray-800">Welcome  </h1>
+                    <h1 className="text-1xl font-black text-gray-800">To </h1>
+
+                    <h1 className="text-3xl font-black text-gray-800">HiddenHaat</h1>
+
+          <p className="text-gray-500 font-medium text-sm mt-1">Unveiling The Local Treasure</p>
         </div>
 
         {/* Role Tabs */}

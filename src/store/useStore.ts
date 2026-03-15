@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Product } from '@/types/shop';
 import { SHOPS } from '@/data/shops';
+import { haptic } from '@/utils/haptic';
 
 
 
@@ -62,6 +63,14 @@ setTheme: (t: ThemeMode) => void;
   toggleWish: (shopId: string, prodId: string, product: Product, shopName: string) => void;
   isWished: (shopId: string, prodId: string) => boolean;
 
+  // Recently Viewed
+  recentlyViewed: string[];
+  addRecentlyViewed: (id: string) => void;
+
+  // Search History
+  searchHistory: string[];
+  addSearchHistory: (query: string) => void;
+
   // Toast
   toast: ToastState;
   showToast: (msg: string) => void;
@@ -113,6 +122,7 @@ export const useStore = create<AppStore>((set, get) => ({
     const idx = wishlist.findIndex(w => w.shopId === shopId && w.prodId === prodId);
     if (idx >= 0) {
       set({ wishlist: wishlist.filter((_, i) => i !== idx) });
+      haptic.light();
       get().showToast('Removed from wishlist');
     } else {
       set({
@@ -122,11 +132,30 @@ export const useStore = create<AppStore>((set, get) => ({
           unit: product.unit, shopName,
         }],
       });
+      haptic.success();
       get().showToast('Saved to wishlist ❤️');
     }
   },
   isWished: (shopId, prodId) =>
     get().wishlist.some(w => w.shopId === shopId && w.prodId === prodId),
+
+  // ── Recently Viewed ────────────────────────────────────
+  recentlyViewed: [],
+  addRecentlyViewed: (id) => set(s => ({
+    recentlyViewed: [
+      id,
+      ...s.recentlyViewed.filter(x => x !== id)
+    ].slice(0, 5)
+  })),
+
+  // ── Search History ─────────────────────────────────────
+  searchHistory: [],
+  addSearchHistory: (query) => set(s => ({
+    searchHistory: [
+      query,
+      ...s.searchHistory.filter(x => x !== query)
+    ].slice(0, 5)
+  })),
 
   // ── Toast ──────────────────────────────────────────────
   toast: { message: '', visible: false },

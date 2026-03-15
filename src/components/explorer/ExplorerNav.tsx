@@ -1,27 +1,38 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
 const TABS = [
   { page: 'home',     icon: 'home',           label: 'Home' },
   { page: 'map',      icon: 'map-marked-alt', label: 'Map' },
+  { page: 'festival', icon: 'calendar-alt',   label: 'Festivals' },
   { page: 'wishlist', icon: 'heart',          label: 'Saved' },
   { page: 'profile',  icon: 'user',           label: 'You' },
 ] as const;
 
 export default function ExplorerNav() {
+  const router = useRouter();
   const { navTo, wishlist, currentPage } = useStore();
+
+  const handleNav = (page: string) => {
+    if (page === 'festival') {
+      router.push('/festival');
+    } else {
+      navTo(page);
+    }
+  };
 
   return (
     <nav className="bottom-nav fixed bottom-0 left-0 w-full md:hidden z-50 safe-area-bottom">
       <div className="mx-auto w-full max-w-md px-2 flex justify-around py-2">
         {TABS.map(({ page, icon, label }) => {
-          const isActive = currentPage === page;
+          const isActive = currentPage === page || (page === 'festival' && typeof window !== 'undefined' && window.location.pathname.startsWith('/festival'));
           return (
             <button
               key={page}
               type="button"
-              onClick={() => navTo(page)}
+              onClick={() => handleNav(page)}
               aria-label={label}
               className="flex flex-col items-center gap-1 relative px-4 py-1 rounded-xl transition-all"
             >

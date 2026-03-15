@@ -16,7 +16,7 @@ const OWNER_NAVS: { key: OwnerPage; label: string; icon: string }[] = [
 ];
 
 export default function OwnerHeader({ shopName }: Props) {
-  const { ownerPage, ownerNavTo, logout, theme, toggleTheme } = useStore();
+  const { ownerPage, ownerNavTo, logout, theme, setTheme } = useStore();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -57,7 +57,7 @@ export default function OwnerHeader({ shopName }: Props) {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={toggleTheme}
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
           className="text-[#d2b48c] hover:text-white text-lg transition-colors"
           aria-label="Toggle theme"
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
