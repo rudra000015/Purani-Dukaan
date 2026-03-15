@@ -21,7 +21,6 @@ export default function FestivalsPage() {
         onFiltersChange={setFilters}
         totalResults={0}
         onRefetch={() => {}}
-        showSearch={false}
       />
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-28">
         <FestivalHub onNavigate={(slug) => router.push(`/festival/${slug}`)} />

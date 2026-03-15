@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
   let webPush: any;
   try {
     // Avoid hard dependency at type-check time; `require` works fine in Next node runtime.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     webPush = require('web-push');
   } catch {
     return NextResponse.json(

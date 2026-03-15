@@ -6,6 +6,7 @@ import { useStore } from '@/store/useStore';
 import { prodImg } from '@/utils/prodImg';
 import { MenuItem, DayHours } from '@/types/shop';
 import ReviewsSection from './ReviewsSection';
+import FollowShopButton from './FollowShopButton';
 
 // ── Action buttons ────────────────────────────────────────────
 function ActionButtons({ profile }: { profile: any }) {
